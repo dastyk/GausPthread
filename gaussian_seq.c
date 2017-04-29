@@ -53,7 +53,7 @@ work(void)
 	A[k][k] = 1.0;
 	for (i = k+1; i < N; i++) {
 	    for (j = k+1; j < N; j++)
-		A[i][j] = A[i][j] - A[i][k]*A[k][j]; /* Elimination step */
+			A[i][j] = A[i][j] - A[i][k]*A[k][j]; /* Elimination step */
 	    b[i] = b[i] - A[i][k]*y[k];
 	    A[i][k] = 0.0;
 	}

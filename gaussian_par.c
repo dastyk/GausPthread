@@ -158,15 +158,15 @@ work(void* arg)
 			{
 				for (j = i + 1; j < N; j++)
 					tempMatrix[k][j] =A[i][j]/ A[i][i]; // Division step 
-				y[k] = b[k]*divider;
+				y[i] = b[i] / A[i][i];
 			}
 			else if(k > i)
 			{
 				for (j = i + 1; j < N; j++)
 					A[k][j] = A[k][j] - A[k][i]* (A[i][j]/ A[i][i]);// Division and Elimination step
-//				* divider ;cant use this, get floating point rounding errors
+//				* divider ;cant use this, get floating point rounding errors		
+				b[k] = b[k] - A[k][i]*(b[i] / A[i][i]);
 				A[k][i] = 0.0;
-				b[k] = b[k] - A[k][i]*b[k]*divider;
 			}				
 		}
 		
