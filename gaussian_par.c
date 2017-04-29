@@ -108,6 +108,7 @@ work(void* arg)
 	
 	printf("Thread %d starting...\n", myID);
 	
+	sleep(2);
 	
 	for (i = 0; i < N; i++)
 	{	
