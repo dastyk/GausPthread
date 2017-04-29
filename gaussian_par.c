@@ -159,7 +159,7 @@ work(void* arg)
 					tempMatrix[k][j] = A[i][j] * divider; // Division step 
 				y[k] = b[k]*divider;
 			}	
-			if(k >= counter) // If the row is complete skip it.
+			if(k >= i + 1) // If the row is complete skip it.
 			{
 				for (j = counter; j < N; j++)
 					A[k][j] = A[k][j] - tempMatrix[k][j] * A[k][i]; // Elimination step 	
