@@ -157,7 +157,8 @@ work(void* arg)
 			if(k >= counter) // If the row is complete skip it.
 			{
 				for (j = counter; j < N; j++)
-					A[k][j] = tempMatrix[k][j];
+					A[k][j] = A[i][j] * divider;
+				//tempMatrix[k][j];
 				//A[k][j] - tempMatrix[k][j] * A[k][i]; // Elimination step 	
 				A[k][i] = 0.0;
 				b[k] = b[k] - A[k][i]*y[k];
