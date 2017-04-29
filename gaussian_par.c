@@ -144,9 +144,8 @@ work(void* arg)
 		
 		printf("Thread %d is reading\n", myID);
 		
-		sleep(1);
-		
-/*		
+	
+	
 
 		for (k = myID; k < N; k += NUM_THREADS) // The rows the thread should work on
 		{
@@ -169,7 +168,7 @@ work(void* arg)
 			// Copy from temp matrix to A
 			for(k = counter; k < N; k++)
 				A[i][k] = tempMatrix[i][k];
-		}*/
+		}
 		ReadUnlock();
 	}
 }
