@@ -35,7 +35,7 @@ matrix tempMatrix;
 void ReadLock(int iter)
 {
 	pthread_mutex_lock(&counterMutex);
-	while(read == NUM_THREADS || counter < iter)
+	while(counter <= 0)
 	{
 		pthread_cond_wait(&counterCond, &counterMutex);
 		printf("Awakened\n");
@@ -51,7 +51,6 @@ void ReadUnlock()
 	if(read == NUM_THREADS)
 	{
 		printf("Signaling\n");
-		counter++;
 		pthread_cond_broadcast(&counterCond);
 		printf("Signaling done\n");
 	}
@@ -76,6 +75,7 @@ void WriteUnlock()
 {
 	pthread_mutex_lock(&counterMutex);
 	read = 0;
+	counter++;
 	pthread_cond_broadcast(&counterCond);
 	pthread_mutex_unlock(&counterMutex);
 }
