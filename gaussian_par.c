@@ -114,23 +114,21 @@ work(void* arg)
 	{	
 		if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
 		{
-			printf("Calling WL\n");
-			
 			WriteLock();
-			
-			printf("WL Fin\n");
-			
 			divider = 1.0 / A[i][i];	// Calc divider
-			printf("Divider %f\n", divider);
-			
 			A[i][i] = 1.0; 
+			printf("Thread %d is writing\n");
 			WriteUnlock();		
 		}
-		sleep(1);
-		
-/*
+
+
 		ReadLock(i + 1);				// Lock for reading the divider, this is blocked until the writer unlocks increasing the counter to i + 1
 		
+		printf("Thread %d is reading\n");
+		
+		sleep(1);
+		
+/*		
 
 		for (k = myID; k < N; k += NUM_THREADS) // The rows the thread should work on
 		{
@@ -153,8 +151,8 @@ work(void* arg)
 			// Copy from temp matrix to A
 			for(k = counter; k < N; k++)
 				A[i][k] = tempMatrix[i][k];
-		}
-		ReadUnlock();*/
+		}*/
+		ReadUnlock();
 	}
 }
 
