@@ -29,7 +29,7 @@ int counter;
 int read;
 
 long double divider;
-double tempMatrix[MAX_SIZE]
+double temp[MAX_SIZE]
 
 
 void ReadLock(int iter)
@@ -140,7 +140,7 @@ work(void* arg)
 			if(k == i) // If the row is complete skip it.
 			{
 				for (j = i + 1; j < N; j++)
-					tempMatrix[k][j] =A[i][j]/ A[i][i]; // Division step 
+					temp[j] =A[i][j]/ A[i][i]; // Division step 
 				y[i] = b[i] / A[i][i];
 			}
 			else if(k > i)
@@ -160,7 +160,7 @@ work(void* arg)
 			WriteLock();
 			// Copy from temp
 			for(j = i + 1; j < N; j++)
-				A[i][j] = tempMatrix[i][j];
+				A[i][j] = temp[j];
 			printf("Copied, read = %d\n", read);
 			A[i][i] = 1.0;
 			WriteUnlock();			
