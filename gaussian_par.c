@@ -126,7 +126,7 @@ work(void* arg)
 	
 	sleep(2);
 	
-	for (i = 0; i < N; i++)
+	for (i = 0; i < 1; i++)
 	{	
 		if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
 		{
