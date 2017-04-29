@@ -114,6 +114,7 @@ work(void* arg)
 	{	
 		if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
 		{
+			printf("Thread %d wants to lock, counter = %d\n, readers = %d", myID, counter, readers);
 			WriteLock();
 			divider = 1.0 / A[i][i];	// Calc divider
 			A[i][i] = 1.0; 
