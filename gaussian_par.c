@@ -117,6 +117,8 @@ work(void* arg)
 		if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
 		{
 			WriteLock();
+			printf("Iteration %d\n", i + 1);
+			
 			divider = 1.0 / A[i][i];	// Calc divider
 			A[i][i] = 1.0; 
 			WriteUnlock();		
@@ -124,10 +126,6 @@ work(void* arg)
 
 
 		ReadLock(i + 1);				// Lock for reading the divider, this is blocked until the writer unlocks increasing the counter to i + 1
-		
-
-		sleep(1);
-		
 		
 
 		for (k = myID; k < N; k += NUM_THREADS) // The rows the thread should work on
