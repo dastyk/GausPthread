@@ -19,9 +19,53 @@ int	PRINT;		/* print switch		*/
 matrix	A;		/* matrix A		*/
 double	b[MAX_SIZE];	/* vector b             */
 double	y[MAX_SIZE];	/* vector y             */
+#define NUM_THREADS 8
+pthread_t threads[NUM_THREADS];
+int threadID[NUM_THREADS];
+
+pthread_mutex_t counterMutex;
+pthread_cond_t counterCond;
+int counter;
+int readers;
+
+double divider;
+matrix tempMatrix;
+
+
+void ReadLock(int iter)
+{
+	pthread_mutex_lock(&counterMutex);
+	while(iter != counter)
+		pthread_cond_wait(&counterCond, &counterMutex);
+	readers++;
+	pthread_mutex_unlock(&counterMutex);
+}
+void ReadUnlock()
+{
+	pthread_mutex_lock(&counterMutex);
+	readers--;
+	if(readers == 0)
+		pthread_cond_signal(&counterCond);
+	pthread_mutex_unlock(&counterMutex);
+}
+void WriteLock()
+{
+	pthread_mutex_lock(&counterMutex);
+	while(readers > 0)
+		pthread_cond_wait(&counterCond, &counterMutex);
+	pthread_mutex_unlock(&counterMutex);
+}
+
+void WriteUnlock()
+{
+	pthread_mutex_lock(&counterMutex);
+	counter++;
+	pthread_cond_broadcast(&counterCond);
+	pthread_mutex_unlock(&counterMutex);
+}
 
 /* forward declarations */
-void work(void);
+void work(void* arg);
 void Init_Matrix(void);
 void Print_Matrix(void);
 void Init_Default(void);
@@ -31,33 +75,74 @@ int
 main(int argc, char **argv)
 {
     int i, timestart, timeend, iter;
- 
+
+	
     Init_Default();		/* Init default values	*/
     Read_Options(argc,argv);	/* Read arguments	*/
     Init_Matrix();		/* Init the matrix	*/
-    work();
+    
+	pthread_mutex_init(&counterMutex)
+	pthread_cond_init(&counterCond, NULL);
+	counter = 0;
+	readers = 0;
+
+	for (i = 0; i < NUM_THREADS; i++)
+	{
+		threadID[i] = i;
+		pthread_create(&threads[i], NULL, work, &threadID[i]);
+		
+		work(i);
+	}
+	for (i = 0; i < NUM_THREADS; i++)
+	{
+		pthread_join(threads[i], NULL);
+	}
+	
     if (PRINT == 1)
 	Print_Matrix();
 }
 
 void
-work(void)
+work(void* arg)
 {
     int i, j, k;
+	int myID = *(int*)arg;
+	for (i = 0; i < N; i++)
+	{	
+		if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
+		{
+			WriteLock();
+			divider = 1.0 / A[i][i];	// Calc divider
+			A[k][k] = 1.0; 
+			WriteUnlock();		
+		}
+		ReadLock(i + 1);				// Lock for reading the divider, this is blocked until the writer unlocks increasing the counter to i + 1
+		
 
-    /* Gaussian elimination algorithm, Algo 8.4 from Grama */
-    for (k = 0; k < N; k++) { /* Outer loop */
-	for (j = k+1; j < N; j++)
-	    A[k][j] = A[k][j] / A[k][k]; /* Division step */
-	y[k] = b[k] / A[k][k];
-	A[k][k] = 1.0;
-	for (i = k+1; i < N; i++) {
-	    for (j = k+1; j < N; j++)
-		A[i][j] = A[i][j] - A[i][k]*A[k][j]; /* Elimination step */
-	    b[i] = b[i] - A[i][k]*y[k];
-	    A[i][k] = 0.0;
+		for (k = myID; k < N; k += NUM_THREADS) // The rows the thread should work on
+		{
+			if(k >= i) // If the row is complete skip it.
+			{
+				for (j = counter; j < N; j++)
+					tempMatrix[k][j] = A[i][j] * divider; /* Division step */
+				y[k] = b[k]*divider;
+			}	
+			if(k >= counter) // If the row is complete skip it.
+			{
+				for (j = counter; j < N; j++)
+					A[k][j] = A[k][j] - tempMatrix[k][j] * A[k][i]; /* Elimination step */	
+				A[k][i] = 0.0;
+				b[k] = b[k] - A[k][i]*y[k];
+			}					
+		}
+		if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
+		{
+			// Copy from temp matrix to A
+			for(k = counter; k < N; k++)
+				A[i][k] = tempMatrix[i][k];
+		}
+		ReadUnlock();
 	}
-    }
 }
 
 void
