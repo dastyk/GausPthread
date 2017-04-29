@@ -170,7 +170,8 @@ work(void* arg)
 			else if(k > i)
 			{
 				for (j = i + 1; j < N; j++)
-					A[k][j] = A[k][j] - A[k][i]* divider ; // Division and Elimination step
+					A[k][j] = A[k][j] - A[k][i]* (A[i][j]/ A[i][i]);
+//				* divider ; // Division and Elimination step
 				A[k][i] = 0.0;
 				b[k] = b[k] - A[k][i]*b[k]*divider;
 			}				
