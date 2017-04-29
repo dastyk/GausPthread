@@ -29,7 +29,8 @@ int counter;
 int read;
 
 long double divider;
-double temp[MAX_SIZE]
+double temp[MAX_SIZE];
+
 
 
 void ReadLock(int iter)
