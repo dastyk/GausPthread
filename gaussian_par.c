@@ -51,7 +51,7 @@ void ReadUnlock()
 	if(read == NUM_THREADS)
 	{
 		printf("Signaling\n");
-		
+		counter++;
 		pthread_cond_broadcast(&counterCond);
 		printf("Signaling done\n");
 	}
@@ -74,7 +74,6 @@ void WriteLock()
 void WriteUnlock()
 {
 	pthread_mutex_lock(&counterMutex);
-	counter++;
 	read = 0;
 	pthread_cond_broadcast(&counterCond);
 	pthread_mutex_unlock(&counterMutex);
