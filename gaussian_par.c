@@ -141,15 +141,15 @@ work(void* arg)
 
 	for (i = 0; i < 1; i++)
 	{	
-		if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
+		/*if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
 		{
 			printf("Thread %d wants to lock, counter = %d, read = %d\n", myID, counter, read);
 			WriteLock(0);
-			divider = 1.0 / A[i][i];	// Calc divider
+		//	divider = 1.0 / A[i][i];	// Calc divider. cant use this, get floating point rounding errors
 			
 			printf("Thread %d is writing\n", myID);
 			WriteUnlock();		
-		}
+		}*/
 
 
 		ReadLock(i);				// Lock for reading the divider, this is blocked until the writer unlocks increasing the counter to i + 1
@@ -164,14 +164,14 @@ work(void* arg)
 			if(k == i) // If the row is complete skip it.
 			{
 				for (j = i + 1; j < N; j++)
-					tempMatrix[k][j] = A[i][j]* divider; // Division step 
+					tempMatrix[k][j] =A[i][j]/ A[i][i]; // Division step 
 				y[k] = b[k]*divider;
 			}
 			else if(k > i)
 			{
 				for (j = i + 1; j < N; j++)
-					A[k][j] = A[k][j] - A[k][i]* (A[i][j]/ A[i][i]);
-//				* divider ; // Division and Elimination step
+					A[k][j] = A[k][j] - A[k][i]* (A[i][j]/ A[i][i]);// Division and Elimination step
+//				* divider ;cant use this, get floating point rounding errors
 				A[k][i] = 0.0;
 				b[k] = b[k] - A[k][i]*b[k]*divider;
 			}				
