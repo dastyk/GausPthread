@@ -132,6 +132,15 @@ work(void* arg)
 		{
 			printf("Thread %d wants to lock, counter = %d, read = %d\n", myID, counter, read);
 			WriteLock();
+			
+			if(i > 0)
+			{
+				// Copy from temp matrix to A
+				for(k = i; k < N; k++)
+					A[i][k] = tempMatrix[i][k];
+			}
+			
+			
 			divider = 1.0 / A[i][i];	// Calc divider
 			A[i][i] = 1.0; 
 			printf("Thread %d is writing\n", myID);
@@ -164,12 +173,7 @@ work(void* arg)
 				b[k] = b[k] - A[k][i]*y[k];
 			}					
 		}
-		if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
-		{
-			// Copy from temp matrix to A
-			for(k = counter; k < N; k++)
-				A[i][k] = tempMatrix[i][k];
-		}
+
 		ReadUnlock();
 	}
 }
