@@ -168,16 +168,7 @@ work(void* arg)
 			}					
 		}
 		
-		/*if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
-		{
-			WriteLock();
-	
-			// Copy from temp matrix to A
-				for(k = counter; k < N; k++)
-					A[i][k] = tempMatrix[i][k];
-				
-			WriteUnlock();		
-		}*/
+
 		ReadUnlock();
 	}
 
@@ -185,8 +176,8 @@ work(void* arg)
 	{
 		WriteLockCounter(k);
 		// Copy from temp matrix to A
-				//for(j = k + 1; j < N; j++)
-				//	A[k][j] = tempMatrix[k][j];
+		for(j = k + 1; j < N; j++)
+			A[k][j] = tempMatrix[k][j];
 	}
 	
 	
