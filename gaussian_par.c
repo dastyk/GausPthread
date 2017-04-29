@@ -58,10 +58,10 @@ void ReadUnlock()
 		
 	pthread_mutex_unlock(&counterMutex);
 }
-void WriteLock()
+void WriteLock(int i)
 {
 	pthread_mutex_lock(&counterMutex);
-	while(read < NUM_THREADS)
+	while(read + i < NUM_THREADS)
 	{
 		printf("Waiting, read = %d\n", read);
 		pthread_cond_wait(&counterCond, &counterMutex);
@@ -136,7 +136,7 @@ work(void* arg)
 		if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
 		{
 			printf("Thread %d wants to lock, counter = %d, read = %d\n", myID, counter, read);
-			WriteLock();
+			WriteLock(0);
 			divider = 1.0 / A[i][i];	// Calc divider
 			A[i][i] = 1.0; 
 			printf("Thread %d is writing\n", myID);
@@ -168,18 +168,18 @@ work(void* arg)
 			}					
 		}
 		
-
+		if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
+		{
+			WriteLock(1);
+			// Copy from temp matrix to A
+			for(j = i + 1; j < N; j++)
+				A[i][j] = tempMatrix[i][j];
+		}
+	
 		ReadUnlock();
 	}
 
-	for (k = myID; k < N; k += NUM_THREADS) // The rows the thread should work on
-	{
-		WriteLockCounter(k);
-		// Copy from temp matrix to A
-		for(j = k + 1; j < N; j++)
-			A[k][j] = tempMatrix[k][j];
-	}
-	
+
 	
 }
 
