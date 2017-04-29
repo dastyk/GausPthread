@@ -35,7 +35,7 @@ matrix tempMatrix;
 void ReadLock(int iter)
 {
 	pthread_mutex_lock(&counterMutex);
-	while(counter <= 0)
+	while(counter < iter)
 	{
 		pthread_cond_wait(&counterCond, &counterMutex);
 		printf("Awakened\n");
