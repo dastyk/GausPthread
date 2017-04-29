@@ -7,7 +7,7 @@
  *****************************************************/
 
 #include <stdio.h>
-#include <pthread>
+#include <pthread.h>
 #define MAX_SIZE 4096
 
 typedef double matrix[MAX_SIZE][MAX_SIZE];
