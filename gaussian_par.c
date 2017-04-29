@@ -46,12 +46,7 @@ void ReadUnlock()
 	readers--;
 	printf("Readers = %d\n", readers);
 	if(readers == 0)
-	{
-		printf("Signaling\n");
-		
-		pthread_cond_signal(&counterCond);
-		printf("Signaling done\n");
-	}
+		pthread_cond_broadcast(&counterCond);
 		
 	pthread_mutex_unlock(&counterMutex);
 }
