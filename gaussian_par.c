@@ -116,7 +116,7 @@ work(void* arg)
 		{
 			WriteLock();
 			divider = 1.0 / A[i][i];	// Calc divider
-			print("Divider %f", divider);
+			printf("Divider %f", divider);
 			
 			A[k][k] = 1.0; 
 			WriteUnlock();		
