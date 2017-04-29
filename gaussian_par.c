@@ -37,11 +37,8 @@ void ReadLock(int iter)
 {
 	pthread_mutex_lock(&counterMutex);
 	while(counter < iter)
-	{
 		pthread_cond_wait(&counterCond, &counterMutex);
-		printf("Awakened\n");
-		
-	}
+
 	pthread_mutex_unlock(&counterMutex);
 }
 void ReadUnlock()
@@ -50,11 +47,7 @@ void ReadUnlock()
 	read ++;
 	printf("Read = %d\n", read);
 	if(read == NUM_THREADS)
-	{
-		printf("Signaling\n");
 		pthread_cond_broadcast(&counterCond);
-		printf("Signaling done\n");
-	}
 
 			
 	pthread_mutex_unlock(&counterMutex);
@@ -63,12 +56,7 @@ void WriteLock()
 {
 	pthread_mutex_lock(&counterMutex);
 	while(read < NUM_THREADS)
-	{
-		printf("Waiting, read = %d\n", read);
 		pthread_cond_wait(&counterCond, &counterMutex);
-		printf("Signaled, read = %d\n", read);
-		
-	}
 	pthread_mutex_unlock(&counterMutex);
 }
 
@@ -157,12 +145,10 @@ work(void* arg)
 		
 		if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
 		{
-			printf("Wait to copy, read = %d\n", read);
 			WriteLock();
 			// Copy from temp
 			for(j = i + 1; j < N; j++)
 				A[i][j] = temp[j];
-			printf("Copied, read = %d\n", read);
 			A[i][i] = 1.0;
 			WriteUnlock();			
 		}
