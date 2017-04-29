@@ -181,7 +181,8 @@ work(void* arg)
 			for(j = i + 1; j < N; j++)
 				A[i][j] = tempMatrix[i][j];
 			printf("Copied, read = %d\n", read);
-			A[i][i] = 1.0; 
+			A[i][i] = 1.0;
+			WriteUnlock()			
 		}
 	}
 
