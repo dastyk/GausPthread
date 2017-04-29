@@ -136,7 +136,7 @@ work(void* arg)
 			if(i > 0)
 			{
 				// Copy from temp matrix to A
-				for(k = i; k < N; k++)
+				for(k = i - 1; k < N; k++)
 					A[i][k] = tempMatrix[i][k];
 			}
 			
