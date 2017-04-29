@@ -46,15 +46,20 @@ void ReadUnlock()
 	readers--;
 	printf("Readers = %d\n", readers);
 	if(readers == 0)
+	{
+		printf("Signaling\n");
+		
 		pthread_cond_signal(&counterCond);
+		printf("Signaling done\n");
+	}
+		
 	pthread_mutex_unlock(&counterMutex);
 }
 void WriteLock()
 {
 	pthread_mutex_lock(&counterMutex);
-	while(readers > 0);
-	
-		//pthread_cond_wait(&counterCond, &counterMutex);
+	while(readers > 0)
+		pthread_cond_wait(&counterCond, &counterMutex);
 	pthread_mutex_unlock(&counterMutex);
 }
 
