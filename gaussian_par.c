@@ -71,11 +71,11 @@ void WriteLock(int i)
 	pthread_mutex_unlock(&counterMutex);
 }
 
-void WriteUnlock(int i)
+void WriteUnlock(int i, int r)
 {
 	pthread_mutex_lock(&counterMutex);
 	counter += i;
-	read = 0;
+	read = r;
 	pthread_cond_broadcast(&counterCond);
 	pthread_mutex_unlock(&counterMutex);
 }
@@ -133,7 +133,7 @@ work(void* arg)
 			divider = 1.0 / A[i][i];	// Calc divider
 			A[i][i] = 1.0; 
 			printf("Thread %d is writing\n", myID);
-			WriteUnlock(1);		
+			WriteUnlock(1, 0);		
 		}
 
 
@@ -169,7 +169,7 @@ work(void* arg)
 				for(k = counter; k < N; k++)
 					A[i][k] = tempMatrix[i][k];
 				
-			WriteUnlock(0);		
+			WriteUnlock(0, read);		
 		}
 		ReadUnlock();
 	}
