@@ -36,7 +36,12 @@ void ReadLock(int iter)
 {
 	pthread_mutex_lock(&counterMutex);
 	while(iter != counter)
+	{
 		pthread_cond_wait(&counterCond, &counterMutex);
+		printf("Awakened\n");
+		
+	}
+		
 	readers++;
 	pthread_mutex_unlock(&counterMutex);
 }
