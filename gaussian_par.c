@@ -112,7 +112,7 @@ work(void* arg)
 	
 	for (i = 0; i < N; i++)
 	{	
-		if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
+	/*	if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
 		{
 			WriteLock();
 			divider = 1.0 / A[i][i];	// Calc divider
@@ -127,13 +127,13 @@ work(void* arg)
 			if(k >= i) // If the row is complete skip it.
 			{
 				for (j = counter; j < N; j++)
-					tempMatrix[k][j] = A[i][j] * divider; /* Division step */
+					tempMatrix[k][j] = A[i][j] * divider; // Division step 
 				y[k] = b[k]*divider;
 			}	
 			if(k >= counter) // If the row is complete skip it.
 			{
 				for (j = counter; j < N; j++)
-					A[k][j] = A[k][j] - tempMatrix[k][j] * A[k][i]; /* Elimination step */	
+					A[k][j] = A[k][j] - tempMatrix[k][j] * A[k][i]; // Elimination step 	
 				A[k][i] = 0.0;
 				b[k] = b[k] - A[k][i]*y[k];
 			}					
@@ -144,7 +144,7 @@ work(void* arg)
 			for(k = counter; k < N; k++)
 				A[i][k] = tempMatrix[i][k];
 		}
-		ReadUnlock();
+		ReadUnlock();*/
 	}
 }
 
