@@ -29,7 +29,7 @@ int counter;
 int read;
 
 long double divider;
-matrix tempMatrix;
+double tempMatrix[MAX_SIZE]
 
 
 void ReadLock(int iter)
@@ -129,28 +129,11 @@ work(void* arg)
 {
     int i, j, k;
 	int myID = *(int*)arg;
-	
-	printf("Thread %d starting...\n", myID);
 
 	for (i = 0; i < N; i++)
 	{	
-		/*if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
-		{
-			printf("Thread %d wants to lock, counter = %d, read = %d\n", myID, counter, read);
-			WriteLock(0);
-		//	divider = 1.0 / A[i][i];	// Calc divider. !!!!!!!!!!!!!cant use this, get floating point rounding errors!!!!!!!!!!!!!!!
-			
-			printf("Thread %d is writing\n", myID);
-			WriteUnlock();		
-		}*/
 
-
-		ReadLock(i);				// Lock for reading the divider, this is blocked until the writer unlocks increasing the counter to i + 1
-		
-		printf("Thread %d is reading\n", myID);
-		
-	
-	
+		ReadLock(i);				// Wait for the iteration to begin.
 
 		for (k = myID; k < N; k += NUM_THREADS) // The rows the thread should work on
 		{
@@ -164,20 +147,18 @@ work(void* arg)
 			{
 				for (j = i + 1; j < N; j++)
 					A[k][j] = A[k][j] - A[k][i]* (A[i][j]/ A[i][i]);// Division and Elimination step
-//				* divider ;cant use this, get floating point rounding errors		
 				b[k] = b[k] - A[k][i]*(b[i] / A[i][i]);
 				A[k][i] = 0.0;
 			}				
 		}
-		
-	
+			
 		ReadUnlock();
 		
 		if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
 		{
 			printf("Wait to copy, read = %d\n", read);
 			WriteLock();
-			// Copy from temp matrix to A
+			// Copy from temp
 			for(j = i + 1; j < N; j++)
 				A[i][j] = tempMatrix[i][j];
 			printf("Copied, read = %d\n", read);
