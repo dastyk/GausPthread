@@ -46,7 +46,7 @@ work(void)
     int i, j, k;
 
     /* Gaussian elimination algorithm, Algo 8.4 from Grama */
-    for (k = 0; k < N; k++) { /* Outer loop */
+    for (k = 0; k < 1; k++) { /* Outer loop */
 	for (j = k+1; j < N; j++)
 	    A[k][j] = A[k][j] / A[k][k]; /* Division step */
 	y[k] = b[k] / A[k][k];
