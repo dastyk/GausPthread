@@ -59,7 +59,12 @@ void WriteLock()
 {
 	pthread_mutex_lock(&counterMutex);
 	while(readers > 0)
+	{
+		printf("Waiting, readers = %d", readers);
 		pthread_cond_wait(&counterCond, &counterMutex);
+		printf("Signaled, readers = %d", readers);
+		
+	}
 	pthread_mutex_unlock(&counterMutex);
 }
 
