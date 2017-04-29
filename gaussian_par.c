@@ -161,20 +161,19 @@ work(void* arg)
 
 		for (k = myID; k < N; k += NUM_THREADS) // The rows the thread should work on
 		{
-			if(k >= i) // If the row is complete skip it.
+			if(k == i) // If the row is complete skip it.
 			{
 				for (j = counter; j < N; j++)
 					tempMatrix[k][j] = A[i][j] * divider; // Division step 
 				y[k] = b[k]*divider;
-			}	
-			if(k >= i + 1) // If the row is complete skip it.
+			}
+			else if(k > i)
 			{
 				for (j = counter; j < N; j++)
-					A[k][j] = tempMatrix[k][j];
-				//A[k][j] - tempMatrix[k][j] * A[k][i]; // Elimination step 	
+					A[k][j] = A[k][j] - A[i][j] * divider * A[k][i]; // Division and Elimination step
 				A[k][i] = 0.0;
-				b[k] = b[k] - A[k][i]*y[k];
-			}					
+				b[k] = b[k] - A[k][i]*b[k]*divider;
+			}				
 		}
 		
 		if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
