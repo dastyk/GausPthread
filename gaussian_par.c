@@ -65,7 +65,7 @@ void WriteUnlock()
 }
 
 /* forward declarations */
-void work(void* arg);
+void* work(void* arg);
 void Init_Matrix(void);
 void Print_Matrix(void);
 void Init_Default(void);
@@ -81,7 +81,7 @@ main(int argc, char **argv)
     Read_Options(argc,argv);	/* Read arguments	*/
     Init_Matrix();		/* Init the matrix	*/
     
-	pthread_mutex_init(&counterMutex, NULL)
+	pthread_mutex_init(&counterMutex, NULL);
 	pthread_cond_init(&counterCond, NULL);
 	counter = 0;
 	readers = 0;
@@ -89,9 +89,7 @@ main(int argc, char **argv)
 	for (i = 0; i < NUM_THREADS; i++)
 	{
 		threadID[i] = i;
-		pthread_create(&threads[i], NULL, work, &threadID[i]);
-		
-		work(i);
+		pthread_create(&threads[i], NULL, work, (void*)&threadID[i]);
 	}
 	for (i = 0; i < NUM_THREADS; i++)
 	{
@@ -102,7 +100,7 @@ main(int argc, char **argv)
 	Print_Matrix();
 }
 
-void
+void*
 work(void* arg)
 {
     int i, j, k;
