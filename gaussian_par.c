@@ -115,7 +115,7 @@ main(int argc, char **argv)
 	pthread_mutex_init(&counterMutex, NULL);
 	pthread_cond_init(&counterCond, NULL);
 	counter = 0;
-	read = NUM_THREADS;
+	read = 0;
 	
 	for (i = 0; i < NUM_THREADS; i++)
 	{
@@ -145,7 +145,7 @@ work(void* arg)
 		{
 			printf("Thread %d wants to lock, counter = %d, read = %d\n", myID, counter, read);
 			WriteLock(0);
-		//	divider = 1.0 / A[i][i];	// Calc divider. cant use this, get floating point rounding errors
+		//	divider = 1.0 / A[i][i];	// Calc divider. !!!!!!!!!!!!!cant use this, get floating point rounding errors!!!!!!!!!!!!!!!
 			
 			printf("Thread %d is writing\n", myID);
 			WriteUnlock();		
