@@ -44,6 +44,8 @@ void ReadUnlock()
 {
 	pthread_mutex_lock(&counterMutex);
 	readers--;
+	printf("Readers = %d\n", readers);
+	
 	if(readers == 0)
 		pthread_cond_signal(&counterCond);
 	pthread_mutex_unlock(&counterMutex);
