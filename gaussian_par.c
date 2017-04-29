@@ -117,14 +117,14 @@ work(void* arg)
 			WriteLock();
 			divider = 1.0 / A[i][i];	// Calc divider
 			A[i][i] = 1.0; 
-			printf("Thread %d is writing\n");
+			printf("Thread %d is writing\n", myID);
 			WriteUnlock();		
 		}
 
 
 		ReadLock(i + 1);				// Lock for reading the divider, this is blocked until the writer unlocks increasing the counter to i + 1
 		
-		printf("Thread %d is reading\n");
+		printf("Thread %d is reading\n", myID);
 		
 		sleep(1);
 		
