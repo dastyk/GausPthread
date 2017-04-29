@@ -26,7 +26,7 @@ int threadID[NUM_THREADS];
 pthread_mutex_t counterMutex;
 pthread_cond_t counterCond;
 int counter;
-int readers;
+int read;
 
 double divider;
 matrix tempMatrix;
@@ -41,16 +41,14 @@ void ReadLock(int iter)
 		printf("Awakened\n");
 		
 	}
-		
-	readers++;
 	pthread_mutex_unlock(&counterMutex);
 }
 void ReadUnlock()
 {
 	pthread_mutex_lock(&counterMutex);
-	readers--;
-	printf("Readers = %d\n", readers);
-	if(readers == 0)
+	read++;
+	printf("Read = %d\n", read);
+	if(read == NUM_THREADS)
 	{
 		printf("Signaling\n");
 		
@@ -63,11 +61,11 @@ void ReadUnlock()
 void WriteLock()
 {
 	pthread_mutex_lock(&counterMutex);
-	while(readers > 0)
+	while(read != NUM_THREADS)
 	{
-		printf("Waiting, readers = %d\n", readers);
+		printf("Waiting, read = %d\n", read);
 		pthread_cond_wait(&counterCond, &counterMutex);
-		printf("Signaled, readers = %d\n", readers);
+		printf("Signaled, read = %d\n", read);
 		
 	}
 	pthread_mutex_unlock(&counterMutex);
@@ -77,6 +75,7 @@ void WriteUnlock()
 {
 	pthread_mutex_lock(&counterMutex);
 	counter++;
+	read = 0;
 	pthread_cond_broadcast(&counterCond);
 	pthread_mutex_unlock(&counterMutex);
 }
@@ -102,7 +101,8 @@ main(int argc, char **argv)
 	pthread_cond_init(&counterCond, NULL);
 	counter = 0;
 	readers = 0;
-
+	read = NUM_THREADS;
+	
 	for (i = 0; i < NUM_THREADS; i++)
 	{
 		threadID[i] = i;
@@ -131,7 +131,7 @@ work(void* arg)
 	{	
 		if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
 		{
-			printf("Thread %d wants to lock, counter = %d, readers = %d\n", myID, counter, readers);
+			printf("Thread %d wants to lock, counter = %d, read = %d\n", myID, counter, read);
 			WriteLock();
 			divider = 1.0 / A[i][i];	// Calc divider
 			A[i][i] = 1.0; 
