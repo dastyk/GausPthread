@@ -48,14 +48,22 @@ void ReadUnlock()
 	pthread_mutex_lock(&counterMutex);
 	read ++;
 	printf("Read = %d\n", read);
-	if(read == NUM_THREADS  - 1)
+	if(read == NUM_THREADS)
 	{
 		printf("Signaling\n");
 		counter++;
 		pthread_cond_broadcast(&counterCond);
 		printf("Signaling done\n");
 	}
-		
+	else if(read == NUM_THREADS  - 1)
+	{
+		printf("Signaling\n");
+	
+		pthread_cond_broadcast(&counterCond);
+		printf("Signaling done\n");
+	}
+
+			
 	pthread_mutex_unlock(&counterMutex);
 }
 void WriteLock(int i)
