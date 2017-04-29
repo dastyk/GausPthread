@@ -146,7 +146,7 @@ work(void* arg)
 			printf("Thread %d wants to lock, counter = %d, read = %d\n", myID, counter, read);
 			WriteLock(0);
 			divider = 1.0 / A[i][i];	// Calc divider
-			A[i][i] = 1.0; 
+			
 			printf("Thread %d is writing\n", myID);
 			WriteUnlock();		
 		}
@@ -164,13 +164,15 @@ work(void* arg)
 			if(k == i) // If the row is complete skip it.
 			{
 				for (j = counter; j < N; j++)
-					tempMatrix[k][j] = A[i][j] * divider; // Division step 
+					tempMatrix[k][j] = A[i][j]/A[i][i];
+//				* divider; // Division step 
 				y[k] = b[k]*divider;
 			}
 			else if(k > i)
 			{
 				for (j = counter; j < N; j++)
-					A[k][j] = A[k][j] - A[k][i] * A[i][j] * divider ; // Division and Elimination step
+					A[k][j] = A[k][j] - A[k][i] * A[i][j]/A[i][i];
+//				* divider ; // Division and Elimination step
 				A[k][i] = 0.0;
 				b[k] = b[k] - A[k][i]*b[k]*divider;
 			}				
@@ -184,6 +186,7 @@ work(void* arg)
 			for(j = i + 1; j < N; j++)
 				A[i][j] = tempMatrix[i][j];
 			printf("Copied, read = %d\n", read);
+			A[i][i] = 1.0; 
 		}
 	
 		ReadUnlock();
