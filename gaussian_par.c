@@ -112,13 +112,16 @@ work(void* arg)
 	
 	for (i = 0; i < N; i++)
 	{	
-	/*	if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
+		if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
 		{
 			WriteLock();
 			divider = 1.0 / A[i][i];	// Calc divider
+			print("Divider %f", divider);
+			
 			A[k][k] = 1.0; 
 			WriteUnlock();		
 		}
+/*
 		ReadLock(i + 1);				// Lock for reading the divider, this is blocked until the writer unlocks increasing the counter to i + 1
 		
 
