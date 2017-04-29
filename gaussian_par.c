@@ -32,10 +32,10 @@ double divider;
 matrix tempMatrix;
 
 
-void ReadLock()
+void ReadLock(int iter)
 {
 	pthread_mutex_lock(&counterMutex);
-	while(read > 0)
+	while(read == NUM_THREADS || counter < iter)
 	{
 		pthread_cond_wait(&counterCond, &counterMutex);
 		printf("Awakened\n");
@@ -144,7 +144,7 @@ work(void* arg)
 		}
 
 
-		ReadLock();				// Lock for reading the divider, this is blocked until the writer unlocks increasing the counter to i + 1
+		ReadLock(i);				// Lock for reading the divider, this is blocked until the writer unlocks increasing the counter to i + 1
 		
 		printf("Thread %d is reading\n", myID);
 		
