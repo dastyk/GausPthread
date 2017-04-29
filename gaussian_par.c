@@ -45,7 +45,6 @@ void ReadUnlock()
 {
 	pthread_mutex_lock(&counterMutex);
 	read ++;
-	printf("Read = %d\n", read);
 	if(read == NUM_THREADS)
 		pthread_cond_broadcast(&counterCond);
 
