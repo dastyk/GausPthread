@@ -185,7 +185,7 @@ work(void* arg)
 	{
 		WriteLockCounter(k);
 		// Copy from temp matrix to A
-				for(j = k; j < N; j++)
+				for(j = k + 1; j < N; j++)
 					A[k][j] = tempMatrix[k][j];
 	}
 	
