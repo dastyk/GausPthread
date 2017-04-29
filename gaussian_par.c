@@ -170,10 +170,12 @@ work(void* arg)
 		
 		if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
 		{
+			printf("Wait to copy, read = %d\n", read);
 			WriteLock(1);
 			// Copy from temp matrix to A
 			for(j = i + 1; j < N; j++)
 				A[i][j] = tempMatrix[i][j];
+			printf("Copied, read = %d\n", read);
 		}
 	
 		ReadUnlock();
