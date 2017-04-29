@@ -100,7 +100,6 @@ main(int argc, char **argv)
 	pthread_mutex_init(&counterMutex, NULL);
 	pthread_cond_init(&counterCond, NULL);
 	counter = 0;
-	readers = 0;
 	read = NUM_THREADS;
 	
 	for (i = 0; i < NUM_THREADS; i++)
