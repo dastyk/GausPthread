@@ -28,7 +28,7 @@ pthread_cond_t counterCond;
 int counter;
 int read;
 
-double divider;
+long long double divider;
 matrix tempMatrix;
 
 
