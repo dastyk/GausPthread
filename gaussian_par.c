@@ -81,7 +81,7 @@ main(int argc, char **argv)
     Read_Options(argc,argv);	/* Read arguments	*/
     Init_Matrix();		/* Init the matrix	*/
     
-	pthread_mutex_init(&counterMutex)
+	pthread_mutex_init(&counterMutex, NULL)
 	pthread_cond_init(&counterCond, NULL);
 	counter = 0;
 	readers = 0;
