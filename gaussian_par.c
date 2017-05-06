@@ -23,58 +23,11 @@ double	y[MAX_SIZE];	/* vector y             */
 pthread_t threads[NUM_THREADS];
 int threadID[NUM_THREADS];
 
-pthread_mutex_t counterMutex;
-pthread_cond_t counterCond;
-int counter;
-int read;
-
 long double divider;
 double temp[MAX_SIZE];
 pthread_barrier_t bar;
 
 
-void ReadLock(int iter)
-{
-	pthread_mutex_lock(&counterMutex);
-	while(counter < iter)
-		pthread_cond_wait(&counterCond, &counterMutex);
-
-	pthread_mutex_unlock(&counterMutex);
-}
-void ReadUnlock()
-{
-	pthread_mutex_lock(&counterMutex);
-	read ++;
-	if(read == NUM_THREADS)
-		pthread_cond_broadcast(&counterCond);
-
-			
-	pthread_mutex_unlock(&counterMutex);
-}
-void WriteLock()
-{
-	pthread_mutex_lock(&counterMutex);
-	while(read < NUM_THREADS)
-		pthread_cond_wait(&counterCond, &counterMutex);
-	pthread_mutex_unlock(&counterMutex);
-}
-
-void WriteUnlock()
-{
-	pthread_mutex_lock(&counterMutex);
-	read = 0;
-	counter++;
-	pthread_cond_broadcast(&counterCond);
-	pthread_mutex_unlock(&counterMutex);
-}
-
-void WriteLockCounter(int i)
-{
-	pthread_mutex_lock(&counterMutex);
-	while(i >= counter)
-		pthread_cond_wait(&counterCond, &counterMutex);
-	pthread_mutex_unlock(&counterMutex);
-}
 
 /* forward declarations */
 void* work(void* arg);
@@ -94,11 +47,7 @@ main(int argc, char **argv)
     Init_Matrix();		/* Init the matrix	*/
     
 	pthread_barrier_init(&bar, NULL, NUM_THREADS);
-	pthread_mutex_init(&counterMutex, NULL);
-	pthread_cond_init(&counterCond, NULL);
-	counter = 0;
-	read = 0;
-	
+
 	for (i = 0; i < NUM_THREADS; i++)
 	{
 		threadID[i] = i;
@@ -122,8 +71,7 @@ work(void* arg)
 	for (i = 0; i < N; i++)
 	{	
 
-		//ReadLock(i);				// Wait for the iteration to begin.
-		
+
 		for (k = myID; k < N; k += NUM_THREADS) // The rows the thread should work on
 		{
 			if(k == i) // If the row is complete skip it.
@@ -141,16 +89,13 @@ work(void* arg)
 			}				
 		}
 			
-		//ReadUnlock();
-		pthread_barrier_wait(&bar);
+		pthread_barrier_wait(&bar); // wait for everyone to finished this iteration
 		if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
 		{
-			//WriteLock();
 			// Copy from temp
 			for(j = i + 1; j < N; j++)
 				A[i][j] = temp[j];
-			A[i][i] = 1.0;
-			//WriteUnlock();			
+			A[i][i] = 1.0;		
 		}
 	}
 
