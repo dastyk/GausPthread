@@ -71,42 +71,30 @@ work(void* arg)
 
 	for (i = 0; i < N; i++)
 	{	
-		if(myID == i % NUM_THREADS) // If the current pivot row belongs to this thread 
+		for (k = myID; k < N; k += NUM_THREADS) // The rows the thread should work on
 		{
-			for (j = i + 1; j < N; j++)
+			if(k == i) // Skip all rows less than i(completed rows)
+			{
+				for (j = i + 1; j < N; j++)
 					temp[myID][j] =A[i][j]/ A[i][i]; // Division step 
 				y[i] = b[i] / A[i][i];
-					
-			
-			for (k = myID + NUM_THREADS; k < N; k += NUM_THREADS) // The rows the thread should work on
+			}
+			else if(k > i)
 			{
 				for (j = i + 1; j < N; j++)
 					A[k][j] = A[k][j] - A[k][i]* (A[i][j]/ A[i][i]);// Division and Elimination step
 				b[k] = b[k] - A[k][i]*(b[i] / A[i][i]);
 				A[k][i] = 0.0;
-			}
+			}				
+		}
 			
-			pthread_barrier_wait(&bar); // wait for everyone to finished this iteration
-			
+		pthread_barrier_wait(&bar); // wait for everyone to finished this iteration
+		if(myID == i % NUM_THREADS) // If the current pivot row belongs to this thread 
+		{
 			// Copy from temp
 			for(j = i + 1; j < N; j++)
 				A[i][j] = temp[myID][j];
 			A[i][i] = 1.0;		
-		}
-		else
-		{
-			for (k = myID; k < N; k += NUM_THREADS) // The rows the thread should work on
-			{
-
-				
-				for (j = i + 1; j < N; j++)
-					A[k][j] = A[k][j] - A[k][i]* (A[i][j]/ A[i][i]);// Division and Elimination step
-				b[k] = b[k] - A[k][i]*(b[i] / A[i][i]);
-				A[k][i] = 0.0;
-					
-			}
-			
-			pthread_barrier_wait(&bar); // wait for everyone to finished this iteration
 		}
 	}
 
