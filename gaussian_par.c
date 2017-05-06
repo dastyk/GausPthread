@@ -23,8 +23,8 @@ double	y[MAX_SIZE];	/* vector y             */
 pthread_t threads[NUM_THREADS];
 int threadID[NUM_THREADS];
 
-long double divider;
-double temp[MAX_SIZE];
+long double divider; // Tried with only one divide but due to floatingpoint arithmetics the answers diviated a bit.
+double temp[NUM_THREADS][MAX_SIZE];
 pthread_barrier_t bar;
 
 
@@ -77,7 +77,7 @@ work(void* arg)
 			if(k == i) // If the row is complete skip it.
 			{
 				for (j = i + 1; j < N; j++)
-					temp[j] =A[i][j]/ A[i][i]; // Division step 
+					temp[myID][j] =A[i][j]/ A[i][i]; // Division step 
 				y[i] = b[i] / A[i][i];
 			}
 			else if(k > i)
@@ -94,7 +94,7 @@ work(void* arg)
 		{
 			// Copy from temp
 			for(j = i + 1; j < N; j++)
-				A[i][j] = temp[j];
+				A[i][j] = temp[myID][j];
 			A[i][i] = 1.0;		
 		}
 	}
