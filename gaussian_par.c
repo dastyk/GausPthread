@@ -30,7 +30,7 @@ int read;
 
 long double divider;
 double temp[MAX_SIZE];
-
+pthread_barrier_t bar;
 
 
 void ReadLock(int iter)
@@ -93,6 +93,7 @@ main(int argc, char **argv)
     Read_Options(argc,argv);	/* Read arguments	*/
     Init_Matrix();		/* Init the matrix	*/
     
+	pthread_barrier_init(&bar, NULL, NUM_THREADS);
 	pthread_mutex_init(&counterMutex, NULL);
 	pthread_cond_init(&counterCond, NULL);
 	counter = 0;
@@ -121,8 +122,8 @@ work(void* arg)
 	for (i = 0; i < N; i++)
 	{	
 
-		ReadLock(i);				// Wait for the iteration to begin.
-
+		//ReadLock(i);				// Wait for the iteration to begin.
+		
 		for (k = myID; k < N; k += NUM_THREADS) // The rows the thread should work on
 		{
 			if(k == i) // If the row is complete skip it.
@@ -140,16 +141,16 @@ work(void* arg)
 			}				
 		}
 			
-		ReadUnlock();
-		
+		//ReadUnlock();
+		pthread_barrier_wait(&bar);
 		if(myID == i % NUM_THREADS) // If the current row to be divided belongs to this thread 
 		{
-			WriteLock();
+			//WriteLock();
 			// Copy from temp
 			for(j = i + 1; j < N; j++)
 				A[i][j] = temp[j];
 			A[i][i] = 1.0;
-			WriteUnlock();			
+			//WriteUnlock();			
 		}
 	}
 
