@@ -19,7 +19,7 @@ int	PRINT;		/* print switch		*/
 matrix	A;		/* matrix A		*/
 double	b[MAX_SIZE];	/* vector b             */
 double	y[MAX_SIZE];	/* vector y             */
-#define NUM_THREADS 8
+#define NUM_THREADS 16
 pthread_t threads[NUM_THREADS];
 int threadID[NUM_THREADS];
 
